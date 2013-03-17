@@ -37,10 +37,6 @@
   
   
   // run fql query
- /* $fql_query_url2 = 'https://graph.facebook.com/'
-    . 'fql?q=SELECT+user_id+FROM+like+where+object_id+IN+(+SELECT+object_id+FROM+like+WHERE+user_id=me()+)'
-    . '&access_token=' . $access_token;
-  */
   $fql_query_url2 = 'https://graph.facebook.com/'
     . 'fql?q=SELECT+url+,+total_count+FROM+link_stat+where+url+IN+(+SELECT+url+FROM+url_like+WHERE+user_id+IN+(+SELECT+uid2+FROM+friend+Where+uid1=me()+)+)+ORDER+BY+total_count+DESC'
     . '&access_token=' . $access_token;
