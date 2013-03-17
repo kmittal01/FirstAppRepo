@@ -8,7 +8,7 @@
  // auth user
  if(empty($code)) {
     $dialog_url = 'https://www.facebook.com/dialog/oauth?client_id=' 
-    . $app_id . '&redirect_uri=' . urlencode($my_url) ;
+    . $app_id . '&redirect_uri=' . urlencode($my_url).'&scope=email,read_stream' ;
     echo("<script>top.location.href='" . $dialog_url . "'</script>");
   }
 
@@ -31,38 +31,27 @@
 
   // display results of fql query
   echo '<pre>';
-  print_r("query results:");
+  print_r("query results for No.of Friends of your friends (sorted):");
   print_r($fql_query_obj);
   echo '</pre>';
   
   
   // run fql query
-  $fql_query_url2 = 'https://graph.facebook.com/'
+ /* $fql_query_url2 = 'https://graph.facebook.com/'
     . 'fql?q=SELECT+user_id+FROM+like+where+object_id+IN+(+SELECT+object_id+FROM+like+WHERE+user_id=me()+)'
     . '&access_token=' . $access_token;
-  $fql_query_result2 = file_get_contents($fql_query_url2);
+  */
+  $fql_query_url2 = 'https://graph.facebook.com/'
+    . 'fql?q=SELECT+url+,+total_count+FROM+link_stat+where+url+IN+(+SELECT+url+FROM+url_like+WHERE+user_id+IN+(+SELECT+uid2+FROM+friend+Where+uid1=me()+)+)+ORDER+BY+total_count+DESC'
+    . '&access_token=' . $access_token;
+	$fql_query_result2 = file_get_contents($fql_query_url2);
   $fql_query_obj2 = json_decode($fql_query_result2, true);
   
   
   // display results of fql query
   echo '<pre>';
-  print_r("query results2:");
+  print_r("query results for the maximum likes/shares/comments (actually the sum of these three) and any of the link liked/shared/commentd by any of immediate friend in your social circle :");
   print_r($fql_query_obj2);
   echo '</pre>';
   
-/*
-  // run fql multiquery
-  $fql_multiquery_url = 'https://graph.facebook.com/'
-    . 'fql?q={"allfriends":"SELECT+uid2+FROM+friend+WHERE+uid1=me()",'
-    . '"friendnames":"SELECT+name+FROM+user+WHERE+uid=uid2"}'
-    . '&access_token=' . $access_token;
-  $fql_multiquery_result = file_get_contents($fql_multiquery_url);
-  $fql_multiquery_obj = json_decode($fql_multiquery_result, true);
-
-  // display results of fql multiquery
-  echo '<pre>';
-  print_r("multi query results:");
-  print_r($fql_multiquery_obj);
-  echo '</pre>';
-*/
 ?>
